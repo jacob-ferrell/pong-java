@@ -5,8 +5,8 @@ public class Ball {
     private int width;
     private int height;
     private int speed;
-    private int vx;
-    private int vy;
+    public int vx;
+    public int vy;
     private Position startPoint;
     private Position endPoint;
     Game game;
@@ -22,26 +22,10 @@ public class Ball {
             serve();
             return;
         }
-        if (vx > 0) {
-            var nextPosition = position.predictOutOfBoundsPosition(vx, vy);
-            if (game.rightPaddle.position.y > nextPosition.y) {
-                game.rightPaddle.moveUp();
-            } else if (game.rightPaddle.position.y + Constants.PADDLE_HEIGHT < nextPosition.y) {
-                game.rightPaddle.moveDown();
-            }
-        }
-        if (hitPaddle()) {
-            this.vx *= -1;
-        }
-        if (position.y + vy >= Constants.SCREEN_HEIGHT || position.y + vy <= Constants.TOOLBAR_HEIGHT) {
-            this.vy *= -1;
-            //return;
-        }
-        if (isOutOfBounds()) {
-            handleScore();
-            //return;
-        }
-
+        game.rightPaddle.moveAI(this);
+        handlePaddleHit();
+        handleWallBounce();
+        handleScore();
         this.position = new Position(position.x + vx, position.y + vy);
     }
     private void serve() {
@@ -68,16 +52,29 @@ public class Ball {
         }
         return position.y >= paddle.position.y && position.y <= paddle.getBottomY();
     }
+    private void handlePaddleHit() {
+        if (hitPaddle()) {
+            this.vx *= -1;
+        }
+    }
+    private void handleWallBounce() {
+        if (position.y + vy >= Constants.SCREEN_HEIGHT || position.y + vy <= Constants.TOOLBAR_HEIGHT) {
+            this.vy *= -1;
+        }
+    }
     private boolean isOutOfBounds() {
         return position.x <= 0 || getRightX() >= Constants.SCREEN_WIDTH;
     }
     private void handleScore() {
+        if (!isOutOfBounds()) {
+            return;
+        }
         if (vx < 0) {
             game.incrementAIScore();
-            game.sideServing = game.rightSide;
+            //game.sideServing = game.rightSide;
         } else {
             game.incrementPlayerScore();
-            //game.sideServing = game.leftSide;
+            game.sideServing = game.leftSide;
         }
         this.startPoint = null;
         this.endPoint = null;
