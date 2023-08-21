@@ -2,8 +2,8 @@ import java.awt.*;
 
 public class Ball {
     public Position position;
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     private int speed;
     public int vx;
     public int vy;
@@ -22,7 +22,7 @@ public class Ball {
             serve();
             return;
         }
-        game.rightPaddle.moveAI(this);
+        game.rightPaddle.moveToBallsPredictedPosition(this);
         handlePaddleHit();
         handleWallBounce();
         handleScore();
@@ -32,11 +32,7 @@ public class Ball {
         this.startPoint = getStartPoint();
         this.endPoint = getEndPoint();
 
-        //System.out.println(new Angle(startPoint, endPoint).inDegrees);
         var angleInRadians = new Angle(startPoint, endPoint).inRadians;
-        double distance = Distance.getDistance(this.startPoint, this.endPoint);
-        double directionX = (endPoint.x - startPoint.x) / distance;
-        double directionY = (endPoint.y - startPoint.y) / distance;
         this.vx = (int) (Math.cos(angleInRadians) * speed);
         this.vy = (int) (Math.sin(angleInRadians) * speed);
         if (vx == 0 && Math.abs(vy) == 1) {
@@ -58,7 +54,7 @@ public class Ball {
         }
     }
     private void handleWallBounce() {
-        if (position.y + vy >= Constants.SCREEN_HEIGHT || position.y + vy <= Constants.TOOLBAR_HEIGHT) {
+        if (getBottomY() >= Constants.SCREEN_HEIGHT || position.y <= Constants.TOOLBAR_HEIGHT) {
             this.vy *= -1;
         }
     }
@@ -88,24 +84,12 @@ public class Ball {
         Wall wallServingTo = sideServingTo.getRandomWall();
         return wallServingTo.getRandomPosition();
     }
-    public static Position lerp(Position start, Position end, double t) {
-        int x = (int) (start.x + t * (end.x - start.x));
-        int y = (int) (start.y + t * (end.y - start.y));
-        return new Position(x, y);
-    }
     public void draw(Graphics2D g2) {
         g2.setColor(Color.WHITE);
         g2.fillRect(position.x, position.y, width, height);
     }
-
-    public int getLeftX() {
-        return position.x;
-    }
     public int getRightX() {
         return position.x + width;
-    }
-    public int getTopY() {
-        return position.y;
     }
     public int getBottomY() {
         return position.y + height;
