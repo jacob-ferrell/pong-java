@@ -1,63 +1,52 @@
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
-public class Ball {
-    public Position position;
-    private final int width;
-    private final int height;
-    private int speed;
-    public int vx;
-    public int vy;
+public class Ball extends Rectangle {
+    private double speed = Constants.BALL_START_SPEED;
+    private final double maxSpeed = Constants.MAX_BALL_SPEED;
+    public double vx, vy;
     private Position startPoint;
     private Position endPoint;
-    Game game;
-    public Ball(Game game, int width, int height) {
+    private final Game game;
+    public Ball(Game game) {
+        super(Constants.BALL_WIDTH, Constants.BALL_HEIGHT, new Position(Constants.HZ_CENTER, Constants.V_CENTER));
         this.game = game;
-        this.width = width;
-        this.height = height;
-        speed = Constants.BALL_START_SPEED;
-        this.position = new Position(Constants.HZ_CENTER, Constants.V_CENTER);
     }
-    public void update() {
+    public void update(double dt) {
         if (this.startPoint == null || endPoint == null) {
             serve();
             return;
         }
         game.rightPaddle.moveToBallsPredictedPosition(this);
-        handlePaddleHit();
-        handleWallBounce();
+        this.game.handleCollision();
+//        handlePaddleHit(dt);
+//        handleWallBounce();
         handleScore();
-        this.position = new Position(position.x + vx, position.y + vy);
+        double newX = this.position.x + (this.vx * dt);
+        double newY = this.position.y + (this.vy * dt);
+        this.position = new Position(newX, newY);
     }
     private void serve() {
+        this.speed = Constants.BALL_START_SPEED;
         this.startPoint = getStartPoint();
         this.endPoint = getEndPoint();
-
-        var angleInRadians = new Angle(startPoint, endPoint).inRadians;
-        this.vx = (int) (Math.cos(angleInRadians) * speed);
-        this.vy = (int) (Math.sin(angleInRadians) * speed);
-        if (vx == 0 && Math.abs(vy) == 1) {
-            serve();
-        }
-        //System.out.println(vx + ", " + vy);
+        var angle = new Angle(startPoint, endPoint);
+        setVelocities(angle.getVelocities());
+//        if (vx == 0 && Mnew VelocityPair(angleInRadians, speed)ath.abs(vy) > 0) {
+//            serve();
+//        }
         this.position = startPoint;
     }
-    private boolean hitPaddle() {
-        var paddle = vx < 0 ? game.leftPaddle : game.rightPaddle;
-        if (position.x > Constants.PADDLE_WIDTH && getRightX() < Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH) {
+    public boolean isInBounds() {
+        if (this.getBottomY() > Constants.SCREEN_HEIGHT || this.position.y < Constants.TOOLBAR_HEIGHT) {
             return false;
         }
-        return position.y >= paddle.position.y && position.y <= paddle.getBottomY();
+        return this.position.x > game.leftPaddle.xCollisionPoint && this.getRightX() < game.rightPaddle.xCollisionPoint;
     }
-    private void handlePaddleHit() {
-        if (hitPaddle()) {
-            this.vx *= -1;
-        }
+    public void invertYVelocity() {
+        this.vy *= -1;
     }
-    private void handleWallBounce() {
-        if (getBottomY() >= Constants.SCREEN_HEIGHT || position.y <= Constants.TOOLBAR_HEIGHT) {
-            this.vy *= -1;
-        }
-    }
+
     private boolean isOutOfBounds() {
         return position.x <= 0 || getRightX() >= Constants.SCREEN_WIDTH;
     }
@@ -84,14 +73,11 @@ public class Ball {
         Wall wallServingTo = sideServingTo.getRandomWall();
         return wallServingTo.getRandomPosition();
     }
-    public void draw(Graphics2D g2) {
-        g2.setColor(Color.WHITE);
-        g2.fillRect(position.x, position.y, width, height);
+    public void incrementSpeed() {
+        this.speed = Math.min(maxSpeed, this.speed + 1);
     }
-    public int getRightX() {
-        return position.x + width;
-    }
-    public int getBottomY() {
-        return position.y + height;
+    public void setVelocities(VelocityPair velocities) {
+        this.vx = velocities.vx * this.speed;
+        this.vy = velocities.vy * this.speed;
     }
 }

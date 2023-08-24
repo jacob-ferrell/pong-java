@@ -8,7 +8,7 @@ public class MovePaddleMouseListener extends MouseMotionAdapter {
     }
     @Override
     public void mouseMoved(MouseEvent e) {
-        int y = Math.min(Math.max(e.getY(), 0), Constants.SCREEN_HEIGHT - Constants.PADDLE_HEIGHT);
+        double y = Math.min(Math.max(e.getY(), 0), Constants.SCREEN_HEIGHT - Constants.PADDLE_HEIGHT);
         game.leftPaddle.position = new Position(game.leftPaddle.position.x, y);
     }
 

@@ -1,34 +1,37 @@
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Paddle {
-    public Position position;
-    public final String side;
-    private final Color color;
-    public int width;
-    public int height;
+public abstract class Paddle extends Rectangle {
+    private int numberOfSections;
+    public final double xCollisionPoint;
+    private final Range xServeRange;
+    private List<PaddleSection> sections;
+    private double medianImpactPoint;
+    public double hzLine;
 
-    public Paddle(String side, Position startPosition, int width, int height) {
-        this.position = startPosition;
-        this.width = width;
-        this.height = height;
-        this.side = side;
-        this.color = Color.WHITE;
-    }
-    public int getBottomY() {
-        return position.y + this.height;
+    public Paddle(double xCollisionPoint, Position position, Range xServeRange, double hzLine) {
+        super(Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, position);
+        this.xCollisionPoint = xCollisionPoint;
+        this.xServeRange = xServeRange;
+        this.hzLine = hzLine;
     }
     public void moveUp() {
-        int newY = Math.max(Constants.TOOLBAR_HEIGHT, position.y - Constants.MOVEMENT_SPEED);
+        double newY = Math.max(Constants.TOOLBAR_HEIGHT, position.y - Constants.MOVEMENT_SPEED);
         this.position = new Position(position.x, newY);
+    }
+    public void setMedianImpactPoint(double medianImpactPoint) {
+        this.medianImpactPoint = medianImpactPoint;
     }
 
     public void moveDown() {
-        int newY = Math.min(Constants.SCREEN_HEIGHT - height, position.y + Constants.MOVEMENT_SPEED);
+        double newY = Math.min(Constants.SCREEN_HEIGHT - height, position.y + Constants.MOVEMENT_SPEED);
         this.position = new Position(position.x, newY);
     }
     public void moveToBallsPredictedPosition(Ball ball) {
-        int vx = ball.vx;
-        int vy = ball.vy;
+        double vx = ball.vx;
+        double vy = ball.vy;
         if (vx <= 0) {
             return;
         }
@@ -39,9 +42,14 @@ public class Paddle {
             this.moveDown();
         }
     }
-    public void draw(Graphics2D g2) {
-        g2.setColor(color);
-        g2.fillRect(position.x, position.y, width, height);
+    public abstract double getNormalizedDistance();
+    private void addSections() {
+        this.sections = new ArrayList<>();
+        for (int i = 0; i < height; i += height / numberOfSections) {
+            sections.add(new PaddleSection(new Range(i, i + (height / numberOfSections)), sections.size()));
+        }
     }
-
+    public double getMedianImpactPoint() {
+        return medianImpactPoint;
+    }
 }

@@ -23,7 +23,7 @@ public class Side {
         return walls.get(randomInd);
     }
     public Position getRandomServingStartPosition() {
-        int adjust = side.equals(Constants.LEFT) ? -(Constants.BALL_WIDTH + 5) : 5;
+        double adjust = side.equals(Constants.LEFT) ? -(Constants.BALL_WIDTH + 5) : 5;
         return new Position(Constants.HZ_CENTER + adjust, Round.getRandomY());
     }
 

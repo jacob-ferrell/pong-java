@@ -11,6 +11,6 @@ public class Round {
 
     public static int getRandomY() {
         Random random = new Random();
-        return random.nextInt(Constants.SCREEN_HEIGHT - Constants.BALL_HEIGHT);
+        return random.nextInt((int)(Constants.SCREEN_HEIGHT - Constants.BALL_HEIGHT));
     }
 }

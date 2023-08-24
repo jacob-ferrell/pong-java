@@ -12,8 +12,8 @@ public class Window extends JFrame implements Runnable {
         setResizable(false);
         setLocationRelativeTo(null); // center on screen
         setVisible(true);
-        g2 = (Graphics2D)getGraphics();
         game = new Game();
+        g2 = (Graphics2D)getGraphics();
         addMouseMotionListener(new MovePaddleMouseListener(game));
         addKeyListener(new MovePaddleKeyListener(game));
     }
@@ -22,7 +22,7 @@ public class Window extends JFrame implements Runnable {
         Graphics dbg = dbImage.getGraphics();
         this.draw(dbg);
         g2.drawImage(dbImage,0, 0, this);
-        game.ball.update();
+        game.ball.update(dt);
     }
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
@@ -38,7 +38,7 @@ public class Window extends JFrame implements Runnable {
         double time = Time.getTime();
         double deltaTime = time - lastFrameTime;
         lastFrameTime = time;
-        update(deltaTime);
+        update(deltaTime / 10_000_000.0);
     }
     }
 }

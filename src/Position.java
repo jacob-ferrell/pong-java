@@ -1,11 +1,13 @@
 import java.util.Objects;
 
 public class Position {
-    public int x;
-    public int y;
-    public Position(int x, int y) {
+    public double x, y;
+    public Position(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+    public double interpolate(double x, Position p2) {
+        return this.y + (x - this.x) * (p2.y - this.y) / (p2.x - this.x);
     }
     @Override
     public boolean equals(Object obj) {
@@ -29,10 +31,10 @@ public class Position {
     public boolean isTopOrBottomWall() {
         return y <= Constants.TOOLBAR_HEIGHT || y >= Constants.SCREEN_WIDTH;
     }
-    public Position predictOutOfBoundsPosition(int vx, int vy) {
-        double timeToHitBottom = Math.abs((double)(Constants.SCREEN_HEIGHT - y + Constants.BALL_HEIGHT) / vy);
-        double timeToHitTop = Math.abs((double) y / vy);
-        double timeToHitRight = (double)(Constants.SCREEN_WIDTH - x + Constants.BALL_WIDTH) / vx;
+    public Position predictOutOfBoundsPosition(double vx, double vy) {
+        double timeToHitBottom = Math.abs((Constants.SCREEN_HEIGHT - y + Constants.BALL_HEIGHT) / vy);
+        double timeToHitTop = Math.abs(y / vy);
+        double timeToHitRight = ((Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH) - x + Constants.BALL_WIDTH) / vx;
         double predictedTime;
 
         if (vy > 0) {
@@ -41,8 +43,8 @@ public class Position {
             predictedTime = Math.min(timeToHitTop, timeToHitRight);
         }
 
-        int predictedX = (int) (x + vx * predictedTime);
-        int predictedY = (int) (y + vy * predictedTime);
+        double predictedX = x + vx * predictedTime;
+        double predictedY = y + vy * predictedTime;
 
         var nextPosition = new Position(predictedX, predictedY);
 
