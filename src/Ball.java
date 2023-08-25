@@ -8,33 +8,28 @@ public class Ball extends Rectangle {
     private Position startPoint;
     private Position endPoint;
     private final Game game;
+    private double dt;
     public Ball(Game game) {
         super(Constants.BALL_WIDTH, Constants.BALL_HEIGHT, new Position(Constants.HZ_CENTER, Constants.V_CENTER));
         this.game = game;
     }
     public void update(double dt) {
-        if (this.startPoint == null || endPoint == null) {
-            serve();
-            return;
-        }
+        this.dt = dt;
+        serve();
         game.rightPaddle.moveToBallsPredictedPosition(this);
-        this.game.handleCollision();
-//        handlePaddleHit(dt);
-//        handleWallBounce();
+        game.handleCollision();
         handleScore();
-        double newX = this.position.x + (this.vx * dt);
-        double newY = this.position.y + (this.vy * dt);
-        this.position = new Position(newX, newY);
+        setPosition();
     }
     private void serve() {
+        if (!startEndPointsAreNull()) {
+            return;
+        }
         this.speed = Constants.BALL_START_SPEED;
-        this.startPoint = getStartPoint();
-        this.endPoint = getEndPoint();
+        this.startPoint = game.serving.getRandomServeStartPosition();
+        this.endPoint = game.serving.getRandomServeEndPosition();
         var angle = new Angle(startPoint, endPoint);
         setVelocities(angle.getVelocities());
-//        if (vx == 0 && Mnew VelocityPair(angleInRadians, speed)ath.abs(vy) > 0) {
-//            serve();
-//        }
         this.position = startPoint;
     }
     public boolean isInBounds() {
@@ -55,29 +50,30 @@ public class Ball extends Rectangle {
             return;
         }
         if (vx < 0) {
-            game.incrementAIScore();
-            //game.sideServing = game.rightSide;
+            game.AIScore.increment();
+            game.serving = game.rightPaddle;
         } else {
-            game.incrementPlayerScore();
-            game.sideServing = game.leftSide;
+            game.playerScore.increment();
+            game.serving = game.leftPaddle;
         }
-        this.startPoint = null;
-        this.endPoint = null;
+        clearStartEndPoints();
         serve();
-    }
-    public Position getStartPoint() {
-        return game.sideServing.getRandomServingStartPosition();
-    }
-    public Position getEndPoint() {
-        Side sideServingTo = game.sideServing.equals(game.leftSide) ? game.rightSide : game.leftSide;
-        Wall wallServingTo = sideServingTo.getRandomWall();
-        return wallServingTo.getRandomPosition();
     }
     public void incrementSpeed() {
         this.speed = Math.min(maxSpeed, this.speed + 1);
     }
+    private boolean startEndPointsAreNull() {
+        return this.startPoint == null || this.endPoint == null;
+    }
+    private void clearStartEndPoints() {
+        this.startPoint = null;
+        this.endPoint = null;
+    }
     public void setVelocities(VelocityPair velocities) {
         this.vx = velocities.vx * this.speed;
         this.vy = velocities.vy * this.speed;
+    }
+    private void setPosition() {
+        this.position =  new Position((position.x + (vx * dt)), position.y + (vy * dt));
     }
 }
