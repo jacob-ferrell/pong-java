@@ -1,24 +1,21 @@
-import java.util.List;
+
+import java.util.Random;
 
 public class Game {
     public final LeftPaddle leftPaddle;
     public final RightPaddle rightPaddle;
-    public int playerScore;
-    public int AIScore;
-    public Side sideServing;
+    public Score playerScore;
+    public Score AIScore;
+    public Paddle serving;
     public Ball ball;
-    public Side leftSide;
-    public Side rightSide;
     public final Range heightRange = new Range(Constants.TOOLBAR_HEIGHT, Constants.SCREEN_HEIGHT);
     public Game() {
-        this.leftSide = new Side(Constants.LEFT);
-        this.rightSide = new Side((Constants.RIGHT));
         this.leftPaddle = new LeftPaddle();
         this.rightPaddle = new RightPaddle();
         this.ball = new Ball(this);
-        this.sideServing = rightSide;
-        this.playerScore = 0;
-        this.AIScore = 0;
+        this.serving = new Paddle[]{leftPaddle, rightPaddle}[new Random().nextInt(2)];
+        this.playerScore = new Score(0, Constants.LEFT_SCORE_POSITION);
+        this.AIScore = new Score(0, Constants.RIGHT_SCORE_POSITION);
     }
 
     public Paddle getHitPaddle() {
@@ -52,13 +49,6 @@ public class Game {
         var angle = new Angle(newAngleInDegrees);
         this.ball.setVelocities(angle.getVelocities());
         this.ball.incrementSpeed();
-    }
-
-    public void incrementPlayerScore() {
-        playerScore++;
-    }
-    public void incrementAIScore() {
-        AIScore++;
     }
 
 }
