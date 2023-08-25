@@ -31,6 +31,8 @@ public class Window extends JFrame implements Runnable {
         game.leftPaddle.draw(g2);
         game.rightPaddle.draw(g2);
         game.ball.draw(g2);
+        game.playerScore.draw(g2);
+        game.AIScore.draw(g2);
     }
     public void run() {
     double lastFrameTime = 0.0;
@@ -39,6 +41,11 @@ public class Window extends JFrame implements Runnable {
         double deltaTime = time - lastFrameTime;
         lastFrameTime = time;
         update(deltaTime / 10_000_000.0);
+//        try {
+//            Thread.sleep(5);
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
     }
     }
 }
