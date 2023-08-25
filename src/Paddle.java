@@ -1,21 +1,18 @@
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public abstract class Paddle extends Rectangle {
-    private int numberOfSections;
     public final double xCollisionPoint;
-    private final Range xServeRange;
-    private List<PaddleSection> sections;
+    public final Range xServeRange;
+    private final double xServeStartPoint;
     private double medianImpactPoint;
     public double hzLine;
 
-    public Paddle(double xCollisionPoint, Position position, Range xServeRange, double hzLine) {
+    public Paddle(double xCollisionPoint, Position position, Range xServeRange, double hzLine, double xServeStartPoint) {
         super(Constants.PADDLE_WIDTH, Constants.PADDLE_HEIGHT, position);
         this.xCollisionPoint = xCollisionPoint;
         this.xServeRange = xServeRange;
         this.hzLine = hzLine;
+        this.xServeStartPoint = xServeStartPoint;
     }
     public void moveUp() {
         double newY = Math.max(Constants.TOOLBAR_HEIGHT, position.y - Constants.MOVEMENT_SPEED);
@@ -43,12 +40,17 @@ public abstract class Paddle extends Rectangle {
         }
     }
     public abstract double getNormalizedDistance();
-    private void addSections() {
-        this.sections = new ArrayList<>();
-        for (int i = 0; i < height; i += height / numberOfSections) {
-            sections.add(new PaddleSection(new Range(i, i + (height / numberOfSections)), sections.size()));
-        }
+    public Position getRandomServeStartPosition() {
+        Range yRange = new Range(Constants.TOOLBAR_HEIGHT, Constants.SCREEN_HEIGHT);
+        return new Position(this.xServeStartPoint, yRange.getRandom());
     }
+    public Position getRandomTopServePosition() {
+        return new Position(this.xServeRange, Constants.TOOLBAR_HEIGHT);
+    }
+    public Position getRandomBottomServePosition() {
+        return new Position(this.xServeRange, Constants.SCREEN_HEIGHT - this.height);
+    }
+    public abstract Position getRandomServeEndPosition();
     public double getMedianImpactPoint() {
         return medianImpactPoint;
     }
