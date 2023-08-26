@@ -2,7 +2,7 @@ import java.awt.*;
 
 public class Score {
     private int score;
-    private Position position;
+    private final Position position;
     public Score(int score, Position position) {
         this.score = score;
         this.position = position;
@@ -14,5 +14,8 @@ public class Score {
         g2.setColor(Color.WHITE);
         g2.setFont(Constants.FONT);
         g2.drawString(String.valueOf(score), (float) position.x, (float) position.y);
+    }
+    public boolean hasWon() {
+        return score >= Constants.POINTS_TO_WIN;
     }
 }
