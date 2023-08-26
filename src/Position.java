@@ -6,8 +6,17 @@ public class Position {
         this.x = x;
         this.y = y;
     }
-    public double interpolate(double x, Position p2) {
-        return this.y + (x - this.x) * (p2.y - this.y) / (p2.x - this.x);
+    public Position(Range rx, Range ry) {
+        this.x = rx.getRandom();
+        this.y = ry.getRandom();
+    }
+    public Position(double x, Range ry) {
+        this.x = x;
+        this.y = ry.getRandom();
+    }
+    public Position(Range rx, double y) {
+        this.x = rx.getRandom();
+        this.y = y;
     }
     @Override
     public boolean equals(Object obj) {
@@ -28,12 +37,9 @@ public class Position {
     public int hashCode() {
         return Objects.hash(x, y);
     }
-    public boolean isTopOrBottomWall() {
-        return y <= Constants.TOOLBAR_HEIGHT || y >= Constants.SCREEN_WIDTH;
-    }
     public Position predictOutOfBoundsPosition(double vx, double vy) {
         double timeToHitBottom = Math.abs((Constants.SCREEN_HEIGHT - y + Constants.BALL_HEIGHT) / vy);
-        double timeToHitTop = Math.abs(y / vy);
+        double timeToHitTop = Math.abs((y - Constants.TOOLBAR_HEIGHT) / vy);
         double timeToHitRight = ((Constants.SCREEN_WIDTH - Constants.PADDLE_WIDTH) - x + Constants.BALL_WIDTH) / vx;
         double predictedTime;
 
