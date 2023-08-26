@@ -33,9 +33,9 @@ public abstract class Paddle extends Rectangle {
             return;
         }
         var nextPosition = ball.position.predictOutOfBoundsPosition(vx, vy);
-        if (this.position.y > nextPosition.y) {
+        if (this.position.y + 10 > nextPosition.y) {
             this.moveUp();
-        } else if (this.position.y + height < nextPosition.y) {
+        } else if (getBottomY() - 10 < nextPosition.y) {
             this.moveDown();
         }
     }
