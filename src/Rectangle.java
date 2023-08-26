@@ -1,8 +1,5 @@
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class Rectangle {
     public Position position;
