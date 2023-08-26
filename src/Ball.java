@@ -56,6 +56,10 @@ public class Ball extends Rectangle {
             game.playerScore.increment();
             game.serving = game.leftPaddle;
         }
+        if (game.AIScore.hasWon() || game.playerScore.hasWon()) {
+            game.endGame();
+            return;
+        }
         clearStartEndPoints();
         serve();
     }

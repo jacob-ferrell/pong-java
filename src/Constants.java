@@ -10,8 +10,12 @@ public class Constants {
     public static final double PADDLE_WIDTH = 5;
     public static final int V_CENTER = SCREEN_HEIGHT / 2;
     public static final int HZ_CENTER = SCREEN_WIDTH / 2;
-    public static final double BALL_HEIGHT = 5;
-    public static final double BALL_WIDTH = 5;
+    public static final double BALL_HEIGHT = 7;
+    public static final double NET_WIDTH = 1;
+    public static final int NET_SECTIONS = 10;
+    public static final int POINTS_TO_WIN = 11;
+    public static final double NET_X = HZ_CENTER - (NET_WIDTH / 2);
+    public static final double BALL_WIDTH = 7;
     public static final double BALL_START_SPEED = 3;
     public static final double MAX_BALL_SPEED = 30;
     public static final double PADDLE_START_Y = V_CENTER - (PADDLE_HEIGHT / 2);

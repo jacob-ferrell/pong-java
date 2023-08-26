@@ -1,4 +1,5 @@
 
+
 import java.util.Random;
 
 public class Game {
@@ -8,6 +9,8 @@ public class Game {
     public Score AIScore;
     public Paddle serving;
     public Ball ball;
+    public Net net;
+    private boolean isOver = false;
     public final Range heightRange = new Range(Constants.TOOLBAR_HEIGHT, Constants.SCREEN_HEIGHT);
     public Game() {
         this.leftPaddle = new LeftPaddle();
@@ -16,6 +19,13 @@ public class Game {
         this.serving = new Paddle[]{leftPaddle, rightPaddle}[new Random().nextInt(2)];
         this.playerScore = new Score(0, Constants.LEFT_SCORE_POSITION);
         this.AIScore = new Score(0, Constants.RIGHT_SCORE_POSITION);
+        this.net = new Net();
+    }
+    public void endGame() {
+        this.isOver = true;
+    }
+    public boolean getIsOver() {
+        return this.isOver;
     }
 
     public Paddle getHitPaddle() {
